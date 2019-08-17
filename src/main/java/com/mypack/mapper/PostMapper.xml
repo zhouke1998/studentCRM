@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mypack.mapper.PostMapper">
+	<select id="getPost" parameterType="post" resultType="post">
+		select postID,postName,depID,depName from crm_post,crm_department 
+		where crm_post.depID=crm_department.id
+		<if test="depID!=null and depID!=''">
+                and depID = #{depID}
+        </if>
+        <if test="postName!=null and postName!=''">
+                and postName like "%"#{postName}"%"
+        </if>
+		order by postID asc
+		<if test="page!=-1">
+			limit #{page},5
+		</if>
+	</select>
+
+	<select id="getPostNumber" parameterType="post" resultType="int">
+		select count(*) from crm_post
+		<where>
+			<if test="depID!=null and depID!=''">
+				and depID = #{depID}
+			</if>
+			<if test="postName!=null and postName!=''">
+				and postName like "%"#{postName}"%"
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insPost" parameterType="post">
+		INSERT INTO crm_post VALUES (default, #{postName}, #{depID});
+	</insert>
+	
+	<select id="getPostById" parameterType="int" resultType="post">
+		select * from crm_post where postID=#{arg0}
+	</select>
+	
+	<update id="updatePost" parameterType="post">
+		UPDATE crm_post SET `postName`=#{postName}, `depID`=#{depID} WHERE (`postID`=#{postID});
+	</update>
+	
+	<delete id="deletePost" parameterType="int">
+		delete from crm_post where postID=#{arg0}
+	</delete>
+</mapper>

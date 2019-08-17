@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mypack.mapper.ClassMapper">
+	<select id="getClasses" resultType="class" parameterType="class">
+		select crm_class.id,className,lessonName,beginTime,endTime,cstate,totalCount,goCount,leaveCount,lessonTypeId,teacherid,userid from crm_class,crm_lessontype
+		where crm_class.lessonTypeId=crm_lessontype.id
+			<if test="className!=null and className!=''">
+                and className like "%"#{className}"%"
+            </if>
+            <if test="cstate!=null and cstate!=''">
+                and  cstate like "%"#{cstate}"%"
+            </if>
+			order by id asc
+			<if test="page!=-1">
+				 limit #{page},5
+			</if>
+	</select>
+
+	<select id="getClassNumber" parameterType="class" resultType="int">
+		select count(*) from crm_class
+		<where>
+			<if test="className!=null and className!=''">
+				and className like "%"#{className}"%"
+			</if>
+			<if test="cstate!=null and cstate!=''">
+				and  cstate like "%"#{cstate}"%"
+			</if>
+		</where>
+	</select>
+
+	<insert id="insClass" parameterType="class">
+		INSERT INTO crm_class VALUES (default, #{className}, #{beginTime}, #{endTime}, #{cstate}, #{totalCount}, #{goCount}, #{leaveCount}, #{lessonTypeId}, NULL, NULL, default, default, #{remark});
+	</insert>
+	
+	<select id="getClassById" parameterType="int" resultType="class">
+		select * from crm_class where id=#{arg0}
+	</select>
+	
+	<update id="updateClass" parameterType="class">
+		UPDATE crm_class SET `className`=#{className}, `beginTime`=#{beginTime}, `endTime`=#{endTime}, `cstate`=#{cstate}, `totalCount`=#{totalCount}, `goCount`=#{goCount}, `leaveCount`=#{leaveCount}, `lessonTypeId`=#{lessonTypeId},`remark`=#{remark} WHERE (`id`=#{id});
+	</update>
+	
+	<delete id="delClass" parameterType="int">
+		delete from crm_class where id=#{arg0}
+	</delete>
+</mapper>

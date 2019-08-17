@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mypack.mapper.StaffMapper">
+	<select id="getStaff" resultType="staff" parameterType="staff">
+		select staffID, staffName, gender, birthday, onDutyDate, crm_staff.postID, state ,postName from crm_staff,crm_post 
+		where crm_staff.postID=crm_post.postID 
+		<if test="staffName!=null and staffName!=''">
+                and staffName like "%"#{staffName}"%"
+        </if>
+        <if test="postID!=null and postID!=''">
+                and crm_staff.postID = #{postID}
+        </if>
+		order by staffID asc
+		<if test="page!=-1">
+			limit #{page},5
+		</if>
+	</select>
+	
+	<insert id="insStaff" parameterType="staff">
+		INSERT INTO crm_staff VALUES (default, #{staffCode}, #{loginName}, #{loginPwd}, #{staffName}, #{gender}, #{email}, #{birthday}, #{onDutyDate}, #{postID}, #{state});
+	</insert>
+
+	<select id="getStaffNumber" parameterType="staff" resultType="int">
+		select count(*) from crm_staff
+		<where>
+			<if test="staffName!=null and staffName!=''">
+				and staffName like "%"#{staffName}"%"
+			</if>
+			<if test="postID!=null and postID!=''">
+				and crm_staff.postID = #{postID}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selStaffById" parameterType="int" resultType="staff">
+		select staffID, staffName, gender, loginPwd, loginName, staffCode, birthday, onDutyDate, crm_staff.postID, state ,postName from crm_staff,crm_post where crm_staff.postID=crm_post.postID and staffID=#{arg0}
+	</select>
+	
+	<update id="updateStaff" parameterType="staff">
+		UPDATE crm_staff SET `staffCode`=#{staffCode}, `loginName`=#{loginName}, `loginPwd`=#{loginPwd}, `staffName`=#{staffName}, `gender`=#{gender}, `email`=#{email}, `birthday`=#{birthday}, `onDutyDate`=#{onDutyDate}, `postID`=#{postID}, `state`=#{state} WHERE (`staffID`=#{staffID});
+	</update>
+	
+	<delete id="deleteStaff" parameterType="int">
+		delete from crm_staff where staffID = #{arg0}
+	</delete>
+
+	<select id="login" parameterType="staff" resultType="int">
+		select count(*) from crm_staff where loginName=#{loginName} and loginPwd=#{loginPwd}
+	</select>
+</mapper>
