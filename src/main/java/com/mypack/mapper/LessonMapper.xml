@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mypack.mapper.LessonMapper">
+	<select id="getLesson" resultType="lesson" parameterType="lesson">
+		select * from crm_lessontype
+		<where>
+			<if test="lessonName!=null and lessonName!=''">
+                and lessonName like "%"#{lessonName}"%"
+            </if>
+		</where>
+		order by id asc
+		<if test="page!=-1">
+			limit #{page},5
+		</if>
+	</select>
+
+	<select id="getLessonNumber" parameterType="lesson" resultType="int">
+		select count(*) from crm_lessontype
+		<where>
+			<if test="lessonName!=null and lessonName!=''">
+				and lessonName like "%"#{lessonName}"%"
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insLesson" parameterType="lesson">
+		INSERT INTO crm_lessontype VALUES (default, #{lessonName}, #{lessoncost}, #{totalTime}, #{remark});
+	</insert>
+	
+	<select id="getLessonById" parameterType="int" resultType="lesson">
+		select * from crm_lessontype where id=#{arg0}
+	</select>
+	
+	<update id="updateLesson" parameterType="lesson">
+		UPDATE crm_lessontype SET `lessonName`=#{lessonName}, `lessoncost`=#{lessoncost}, `totalTime`=#{totalTime}, `remark`=#{remark} WHERE (`id`=#{id});
+	</update>
+	
+	<delete id="deleteLesson" parameterType="int">
+		delete from crm_lessontype where id=#{arg0}
+	</delete>
+</mapper>

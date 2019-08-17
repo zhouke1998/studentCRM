@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mypack.mapper.JobMapper">
+	<select id="getJob" resultType="job" parameterType="job">
+		select crm_job.id, stuCode, stuName, gender, classid,className, jobcomId,companyName, location, activeCode, jobState, jobTime, crm_job.remark from crm_job,crm_class,crm_jobcomany
+		where crm_job.classid=crm_class.id and crm_job.jobcomId=crm_jobcomany.id
+			<if test="classid!=null and classid!=''">
+				and classid = #{classid}
+			</if>
+			<if test="jobcomId!=null and jobcomId!=''">
+                and jobcomId = #{jobcomId}
+            </if>
+            <if test="stuName!=null and stuName!=''">
+                and  stuName like "%"#{stuName}"%"
+            </if>
+			order by id asc
+			<if test="page!=-1">
+				 limit #{page},5
+			</if>
+	</select>
+
+	<select id="getJobNumber" parameterType="job" resultType="int">
+		select count(*) from crm_job,crm_class,crm_jobcomany
+		where crm_job.classid=crm_class.id and crm_job.jobcomId=crm_jobcomany.id
+		<if test="className!=null and className!=''">
+			and className like "%"#{className}"%"
+		</if>
+		<if test="companyName!=null and companyName!=''">
+			and companyName like "%"#{companyName}"%"
+		</if>
+		<if test="stuName!=null and stuName!=''">
+			and  stuName like "%"#{stuName}"%"
+		</if>
+	</select>
+
+	<insert id="insJob" parameterType="job">
+		INSERT INTO crm_job VALUES (default, #{stuCode}, #{stuName}, #{gender}, #{classid}, #{jobcomId}, #{location}, #{activeCode}, #{jobState},#{jobTime}, #{remark});
+	</insert>
+	
+	<select id="getJobById" parameterType="int" resultType="job">
+		select * from crm_job where id=#{arg0}
+	</select>
+	
+	<update id="updateJob" parameterType="class">
+		UPDATE crm_job SET `stuCode`=#{stuCode}, `stuName`=#{stuName}, `gender`=#{gender}, `classid`=#{classid}, `jobcomId`=#{jobcomId}, `location`=#{location}, `activeCode`=#{activeCode}, `jobState`=#{jobState},`jobTime`=#{jobTime},`remark`=#{remark} WHERE (`id`=#{id});
+	</update>
+	
+	<delete id="delJob" parameterType="int">
+		delete from crm_job where id=#{arg0}
+	</delete>
+</mapper>

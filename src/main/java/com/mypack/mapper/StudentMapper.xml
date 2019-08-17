@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mypack.mapper.StudentMapper">
+	<select id="getStudent" parameterType="student" resultType="student">
+		select * from crm_student
+		<where>
+			<if test="stuName!=null and stuName!=''">
+                and stuName like "%"#{stuName}"%"
+            </if>
+            <if test="classid!=null and classid!=''">
+                and  classid = #{classid}
+            </if>
+		</where>
+		order by id asc
+		<if test="page!=-1">
+			limit #{page},5
+		</if>
+	</select>
+
+	<select id="getStudentNumber" parameterType="student" resultType="int">
+		select count(*) from crm_student
+		<where>
+			<if test="stuName!=null and stuName!=''">
+				and stuName like "%"#{stuName}"%"
+			</if>
+			<if test="classid!=null and classid!=''">
+				and  classid = #{classid}
+			</if>
+		</where>
+	</select>
+	
+	<delete id="delStuById" parameterType="int">
+		delete from crm_student where id=#{arg0}
+	</delete>
+	
+	<insert id="insStu" parameterType="student">
+		INSERT INTO crm_student VALUES (default, #{stuName}, #{stuCode}, #{stuSex}, #{referid}, #{classid}, #{beginTime}, #{jobTime}, #{stuState}, #{checkLevel}, #{remark});
+	</insert>
+	
+	<select id="getStuCode" resultType="int">
+		select stuCode from crm_student order by id desc limit 1
+	</select>
+	
+	<select id="getStudentById" parameterType="int" resultType="student">
+		select * from crm_student where id=#{id}
+	</select>
+	
+	<delete id="updStu" parameterType="student">
+		UPDATE crm_student SET `stuName`=#{stuName}, `stuSex`=#{stuSex}, `referid`=#{referid}, `classid`=#{classid}, `beginTime`=#{beginTime}, `jobTime`= #{jobTime}, `stuState`=#{stuState}, `checkLevel`=#{checkLevel}, `remark`=#{remark} WHERE (`id`=#{id});
+	</delete>
+</mapper>
